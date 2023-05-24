@@ -45,3 +45,4 @@ jobs:
         with:
           file: ./Dockerfile
           push: true
+          tags: latest
