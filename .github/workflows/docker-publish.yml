@@ -36,8 +36,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/ttopholm/publish-packages/game
-          tags: type=sha
+          images: ghcr.io/ttopholm/saveeye-extender
+          tags: latest
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
