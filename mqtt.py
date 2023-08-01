@@ -10,7 +10,7 @@ import os
 mqtt_host = os.environ.get('mqtt-host', '127.0.0.1')
 port = os.environ.get('mqtt-port', 1883)
 subscribe_topic = os.environ.get('subscribe-topic', 'saveeye/telemetry')
-publish_topic = os.environ.get('subscribe-topic', 'saveeye/telemetry_calculated')
+publish_topic = os.environ.get('publish-topic', 'saveeye/telemetry_calculated')
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
 last_record = {}
 last_values = []
