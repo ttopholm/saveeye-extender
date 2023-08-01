@@ -14,8 +14,6 @@ publish_topic = os.environ.get('publish-topic', 'saveeye/telemetry_calculated')
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
 last_record = {}
 last_values = []
-factor = os.environ.get('factor', 0.4)
-max_data_points = os.environ.get('max-data-points', 30)
 
 def connect_mqtt():
     client = mqtt_client.Client(client_id)
