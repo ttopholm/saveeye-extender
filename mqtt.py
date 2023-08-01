@@ -10,7 +10,7 @@ import os
 mqtt_host = os.environ.get('mqtt-host', '127.0.0.1')
 port = os.environ.get('mqtt-port', 1883)
 subscribe_topic = os.environ.get('subscribe-topic', 'saveeye/telemetry')
-publish_topic = os.environ.get('subscribe-topic', 'saveeye/telemetry')
+publish_topic = os.environ.get('subscribe-topic', 'saveeye/telemetry_calculated')
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
 last_record = {}
 last_values = []
@@ -27,31 +27,17 @@ def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         global last_record, last_values
         msg_json = json.loads(msg.payload.decode())
-        if 'extenderPulses'  not in last_record:
-            last_record  = msg_json
-        elif 'extenderPulses' in msg_json and msg_json.get('extenderPulses') > last_record.get('extenderPulses'):
+        if 'extenderPulses' not in last_record:
+            last_record = msg_json
+        elif 'extenderPulses' in last_record and 'extenderPulses' in msg_json  and msg_json.get('extenderAdvType') == 1 and msg_json.get('extenderPulses') > last_record.get('extenderPulses'):
             pulses = msg_json.get('extenderPulses') - last_record.get('extenderPulses')
             time_between_pulses = (msg_json.get('extenderTimestamp') - last_record.get('extenderTimestamp'))
             currentpower  = 3600000000 / ((time_between_pulses / pulses))/ 1000
-            last_values.append(currentpower)
-            tmp_last_values = last_values
-
-            if len(last_values) > 3:
-                mean =  statistics.mean(last_values)
-                sd = statistics.stdev(last_values)
-                tmp_last_values = [x for x in tmp_last_values if (x > mean - factor * sd)]
-                tmp_last_values = [x for x in tmp_last_values if (x < mean + factor * sd)]
-                if tmp_last_values[-1]  != currentpower:
-                    currentpower = statistics.mean(tmp_last_values)
-
-                if len(last_values) > max_data_points:
-                    last_values.pop(0)
-
-            client.publish(publish_topic,
-                json.dumps({'currentConsumptionWatt': math.floor(currentpower)})
+            client.publish(topic,
+                json.dumps({'currentConsumptionWatt': currentpower})
             )
-            last_record  = msg_json
 
+            last_record  = msg_json
     client.subscribe(subscribe_topic)
     client.on_message = on_message
 
