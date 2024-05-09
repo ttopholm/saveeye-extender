@@ -9,14 +9,19 @@ import os
 
 mqtt_host = os.environ.get('mqtt-host', '127.0.0.1')
 port = os.environ.get('mqtt-port', 1883)
+mqtt_username = os.environ.get('mqtt-username', None)
+mqtt_password = os.environ.get('mqtt-password', None)
 subscribe_topic = os.environ.get('subscribe-topic', 'saveeye/telemetry')
 publish_topic = os.environ.get('publish-topic', 'saveeye/telemetry_calculated')
+
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
 last_record = {}
 last_values = []
 
 def connect_mqtt():
     client = mqtt_client.Client(client_id)
+    if mqtt_username or mqtt_password:
+        client.username_pw_set(username=mqtt_username, password=mqtt_password)
     client.connect(mqtt_host, port)
     return client
 
