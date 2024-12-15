@@ -27,7 +27,7 @@ def connect_mqtt():
     return client
 
 
-def subscribe(client: mqtt_client):
+def subscribe(client: mqtt):
     def on_message(client, userdata, msg):
         global last_record, last_values
         msg_json = json.loads(msg.payload.decode())
