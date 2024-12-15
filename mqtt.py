@@ -23,7 +23,7 @@ def connect_mqtt():
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     if mqtt_username or mqtt_password:
         client.username_pw_set(username=mqtt_username, password=mqtt_password)
-    client.connect(mqtt_host, mqtt_port)
+    client.connect(mqtt_broker, mqtt_port)
     return client
 
 
@@ -37,7 +37,7 @@ def subscribe(client: mqtt):
             pulses = msg_json.get('extenderPulses') - last_record.get('extenderPulses')
             time_between_pulses = (msg_json.get('extenderTimestamp') - last_record.get('extenderTimestamp'))
             currentpower  = 3600000000 / ((time_between_pulses / pulses))/ 1000
-            client.publish(topic,
+            client.publish(publish_topic,
                 json.dumps({'currentConsumptionWatt': currentpower})
             )
 
